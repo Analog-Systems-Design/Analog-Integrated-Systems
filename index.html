@@ -62,11 +62,200 @@
         <h1>Introduction</h1>
         <h1>Phase Locked Loop(PLL)</h1>
         <h2>Definition</h2>
+        <ul>
+            <li>Phase: <span class="notbold">Quantity to be controlled</span></li>
+            <li>Locked: <span class="notbold">locking means stabilize or make phase difference constant</span></li>
+            <li>Loop: <span class="notbold">Negative Feedback</span></li>
+        </ul>
+        <h2>PLL Design Principles</h2>
         <p>
-            Phase: Quantity of Interest<br/>
-            Locked: Steady State<br/>
-            Loop: Negative Feedback<br/>
+            PLL is a negative feedback system where the output signal frequency 
+            is locked to the input signal frequency because control theory states that 
+            to control a process you will certainly have a finite and constant error so we 
+            will use advantage of control theory of outputting constant error by doing this trick<br/>
+            if we want to control frequency of output wave and make it equal to input wave so we cannot do
+            that control operation direct we will try to control phase of the output signal phase \(\phi_{out}\)
+            and make it equal to input signal phase \(\phi_{in}\) by that we will have constant frequency as explained
+            in equations below (this principle is very huge as it lead us use the same theory but having zero error) 
         </p>
+        $$\phi_{in}-\phi_{out}=\phi_e=constant=> \space Lock \space Condition$$
+        $${dphi_{in} \over dt}-{dphi_{out} \over dt}=0$$
+        $$\omega_{in}=\omega_{out}$$
+        <p>for example if want to make acceleration of car as the setpoint we need to control its velocity</p>
+        <h3>Control Theory</h3>
+        <h4>1. System Modeling</h4>
+        <figure>
+            <img src="images/controlsystem.png"/>
+            <figcaption>Feedback Control system System Modeling</figcaption>
+        </figure>
+        <p>
+            PLL is like above loop but instead of making Vout traces Vin it make phi out traces Phi
+            like in figure below but we merged the summer with transducer by a block named by phase detector
+            while loop filter is the controller and VCO is the target system
+        </p>
+        <figure>
+            <img src="images/pll.png"/>
+            <figcaption>Block Diagram of PLL (System Modeling)</figcaption>
+        </figure>
+        <h4>2. Mathematical Modeling</h4>
+        <figure>
+            <img src="images/mathematicalmodel.JPG"/>
+            <figcaption>Feedback Control system Mathematical Modeling</figcaption>
+        </figure>
+        $${output \over setpoint}={{G(s)G_c(s)} \over 1+{G_c(s)G(s)H(s)}}$$  
+        <h4>3. Analog Devices Modeling</h4>
+        <figure>
+            <img src="images/feedback.png"/>
+            <figcaption>Feedback Control Systems Modeling using Analog devices</figcaption>
+        </figure> 
+        <figure>
+            <img src="images/analogcontrol.png"/>
+            <figcaption>Feedback Control Systems Modeling using Analog devices</figcaption>
+        </figure>  
+        <p>
+            Opamp with finite Gain A0 and a feedback circuit using Passive components (R,L,C)
+        </p> 
+        $$V_{out}=A_{OL}(V_{in}-V_{fb})=A_{OL}(V_{in}-\beta V_{out})$$
+        $$A_{CL}={V_{out} \over V_{in} }= {A_{OL} \over {1+\beta A_{OL}}}={A_{OL} \over {1+LG}}=>{1 \over \beta}$$
+        $$V_{err}=V_{in}-V_{fb}=V_{in}-\beta V_{out} = V_{in}-\beta A_{OL} V_{err}$$
+        $$V_{err}={V_{in} \over {1+\beta A_{OL}}}={V_{in} \over {1+LG}}=>0$$
+        $$LG=LoopGain$$
+        <figure>
+            <img src="images/pllfeedback.JPG"/>
+            <figcaption>Buffer</figcaption>
+        </figure>
+        <figure>
+            <img src="images/buffer.png"/>
+            <figcaption>PLLFeedbackloop</figcaption>
+        </figure>
+        <h3>Phase difference</h3>
+        <p>
+            We can express phase as a linear function of time because its derivative is the angular frequency of sine wave 
+            which is usually constant
+            so that we can express the change of phase between two signals by \(\Delta \phi\), 
+            in the following way: \(x_1(t)=V_1sin(wt+\lambda_1)=V_1sin(\phi_1(t))\) and \(x_2(t)=V_2sin(wt+\lambda_2)=V_2sin(\phi_2(t))\)
+            $$\omega={d\phi_1 \over dt}={d\phi_2 \over dt}=constant$$
+            $$\phi_1(t)=wt+\lambda_1, \phi_2(t)=wt+\lambda_2 $$ then we can plot them as two lines as in figure below
+        </p>
+        <figure>
+            <img src="" alt="working on it"/>
+            <figcaption>two different phase shifts</figcaption>
+        </figure>
+        <p>
+            if we make \(\lambda_1 = \lambda_2=\lambda\) but with two different angular frequencies \(\omega_1 , \omega_2\) 
+            then we will have two lines with two different slopes but with same interception on y-axis we made \(\lambda=0\)
+            in figure below<br/>
+        </p>
+        <figure>
+            <img src="images/pllphase.png"/>
+            <figcaption>two different angular frequencies</figcaption>
+        </figure>
+        <p>
+            where also we can express frequency shift keying modulation like in figure below we have two slopes one
+            for \(+ve\Delta f\) and one for \(-ve\Delta f\)
+        </p>
+        <figure>
+            <img src="images/fsk_signal.png"/>
+            <figcaption>Change in phase Frequency Shift Keying Modulation</figcaption>
+        </figure>
+        <h3>Excess Phase & Jitter</h3>
+        <p>
+
+        </p>
+        <h2>PLL Building Blocks</h2>
+        <ol>
+            <li>Voltage Controlled Oscillator (VCO):<span class="notbold">the process which we are trying to control(Voltage-->Frequency)</span></li>
+            <li>Phase Detector:<span class="notbold"> transforms phase error signal to AC voltage error signal(Sensor)</span></li>
+            <li>Loop Filter:<span class="notbold">changes AC Voltage signal to a DC Voltage signal for control </span></li>
+            <li>Frequency Divider(Digital Block(Modulus-counter or divider)):<span class="notbold">equal to one</span></li>
+        </ol>
+        <figure>
+            <img src="images/controlpllanalysis.JPG"/>
+            <figcaption>PLL Block Diagram</figcaption>
+        </figure>
+        <h3>Voltage Controlled Oscillator(Actuator)</h3>
+        <p>
+            We control output frequency using a gain of K and Vcontrol where it controls output frequency by the change in 
+            input voltage 
+        </p>
+        $$\omega_{out}=\omega_o + K_{VCO}.V_{CONT}$$
+        $$\omega_o is the free running frequency$$
+        $$K_{VCO} \space is \space the \space gain \space of \space VCO [(rad/sec.)/V]$$
+        <figure>
+            <img src="images/vco.png"/>
+            <figcaption>Phase Shifter average versus change in shift of phase</figcaption>
+        </figure>
+        <h3>Phase Detector Implementation(Sensor)</h3>
+        <p>
+            we implemented phase detector using xor gate but its disadvantage works only for digital signal and second
+            thing is that we have not to increase phase shift than pi or decrease it than zero because that will make 
+            phase difference become less than zero which will convert feedback to positive feedback so we work at phase 
+            difference of pi/2 but how pll works if we have error because we are targetting to have a constant phase error
+            which leads to zero frequency error
+        </p>
+        <figure>
+            <img src="images/phaseshiftdetector.png"/>
+            <figcaption>Phase Shift Detector</figcaption>
+        </figure>
+        <p>
+            we can plot average of phase shift detector along with phase shift, phase detector acts like a sensor which transforms
+            physical phenomenon(phase shift) to a Electrical characteristics(Voltage Change) in our case we can that transducer is 
+            the digital summer of xor 
+        </p>
+        $$\Delta \phi ====>PhaseDetector(Sensor)====> \Delta V$$
+        <figure>
+            <img src="images/averageofphaseshifter.png"/>
+            <figcaption>Phase Shifter average versus change in shift of phase</figcaption>
+        </figure>
+        <h3>Loop Filter(Controller)</h3>
+        <p>
+            Loop filter is a low pass filter which integrates on AC signal to get DC voltage signal for controlling VCO
+        </p>
+        $$\Delta V_{controlDC}=\int \Delta V_{ControlAC} dt ==VCO==> \Delta Frequency=\int \Delta \phi_{phaseshift} dt$$
+        $$Current \space in \space Branch \space R =I={{V_{in}-V_{out}}\over {R}}$$ 
+        $$V_{out}={Q \over c}={{\int I dt} \over c}=\int{{{V_{in}-V_{out} }\over {RC}}dt}$$
+        <figure>
+            <img src="images/analoglpfrc.png"/>
+            <figcaption>Phase Shift Detector</figcaption>
+        </figure>
+        <h3>Frequency Divider</h3>
+        <p>
+            Building a digital counter is a simple type of flipflops
+        </p>
+        
+        <h2>Behavior of PLL</h2>
+        <ul>
+            <li>In steady state (lock condition)</li>
+            <li>For small perturbation - Qualitative</li>
+            <li>Quantitative using Small Signal Model</li>
+        </ul>
+        <h3>Steady State (Lock Condition)</h3>
+        <p>
+            PLL reached steady state means that phase difference between input and output became constant
+            \(\phi_{error}=\phi_{in}-\phi_{out}=constant\) which leads to \(\omega_{in}=\omega_{out}\)<br/>
+            phase error must be inversely proportional with loop-gain
+        </p>
+        $$\Delta \phi_e = \phi_{e1} - \phi_{e2} = {{\Delta \omega}\over{K_{PD}K_{VCO}}} @M=1$$
+        <h2>Step Response of input phase on PLL</h2>
+        <h3>Block Diagram</h3>
+        
+        <h3>Step input</h3>
+        $$V_{in}{(t)}=V_A cos \omega_1 t$$
+        $$V_{out}{(t)}=V_B cos{(\omega_1 t +\phi_o)}$$
+        <figure>
+            <img src="images/inputstep.png"/>
+            <figcaption>PLL input step</figcaption>
+        </figure>
+        <h3>Output(Phase control)</h3>
+        <p>
+            width of VPD determines how much is phase difference which also indicates how much we decrease/increase VCO in order
+            to control Vout lpf acts as integrator so when VPD width increases its value increases which increases VCO precedingly
+            and vice versa
+        </p>
+        <figure>
+            <img src="images/pllphasecontrol.png"/>
+            <figcaption>PLL Phase Control</figcaption>
+        </figure>
         <h2>Applications</h2>
         <ol>
             <li>Frequency synthesizer in a wireless reciever</li>
@@ -74,7 +263,7 @@
             <li>Frequency modulation & demodulation</li>
             <li>Skew Cancellation</li>
         </ol>
-        <h2>PLL as Frequency Synthesizer in wireless receiver</h2>
+        <h3>PLL as Frequency Synthesizer in wireless receiver</h3>
         <p>
             after antenna we have a bandpass filter to select a whole band not a channel like in case of a GSM like 800Mhz,
             900Mhz, 1800Mhz, 1900Mhz and there are channels inside each band where each channel inside band is of width 200KHz,
@@ -101,73 +290,6 @@
             <img src="images/wirelessreceiverblockdiagram.png"/>
             <figcaption>Block Diagram of a wireless receiver</figcaption>
         </figure>  
-        <h3>PLL Analogy</h3>
-        <p>
-            PLL is a negative feedback system where the output signal is phase and frequency 
-            locked to a reference signal. where closed loop gain is equal to one means that output
-            is tracking input
-        </p>
-        <h4>Feedback Theory</h4>
-        <figure>
-            <img src="images/feedback.png"/>
-            <figcaption>Feedback</figcaption>
-        </figure> 
-        $$V_{out}=A_{OL}(V_{in}-V_{fb})=A_{OL}(V_{in}-\beta V_{out})$$
-        $$A_{CL}={V_{out} \over V_{in} }= {A_{OL} \over {1+\beta A_{OL}}}={A_{OL} \over {1+LG}}=>{1 \over \beta}$$
-        $$V_{err}=V_{in}-V_{fb}=V_{in}-\beta V_{out} = V_{in}-\beta A_{OL} V_{err}$$
-        $$V_{err}={V_{in} \over {1+\beta A_{OL}}}={V_{in} \over {1+LG}}=>0$$
-        $$LG=LoopGain$$
-        <p>
-            PLL is like above loop but instead of making Vout traces Vin it make phi out traces Phi
-            like in figure below
-        </p>
-        <figure>
-            <img src="images/pllfeedback.JPG"/>
-            <figcaption>Buffer</figcaption>
-        </figure>       
-        <figure>
-            <img src="images/buffer.png"/>
-            <figcaption>PLLFeedbackloop</figcaption>
-        </figure> 
-        $$\phi_{in}-\phi_{out}=\phi_e=constant=>0 \space Lock \space Condition$$
-        $${dphi_{in} \over dt}-{dphi_{out} \over dt}=0$$
-        $$\omega_{in}=\omega_{out}$$
-        <h4>Phase</h4>
-        <p>
-            We would like to express phase as a linear function of time and its derivative is the angular frequency of sine wave
-            so that we can express the change of phase between two signals by \(\Delta \phi\)
-        </p>
-        <figure>
-            <img src="images/pllphase.png"/>
-            <figcaption>PLL_Phase</figcaption>
-        </figure>
-        <p>
-            where also we can express frequency shift keying modulation like in figure below we have two slopes one
-            for \(+ve\Delta f\) and one for \(-ve\Delta f\)
-        </p>
-        <figure>
-            <img src="images/fsk_signal.png"/>
-            <figcaption>Change in phase Frequency Shift Keying Modulation</figcaption>
-        </figure>
-        <h4>Excess Phase & Jitter</h4>
-        <p>
-
-        </p>
-        <h3>PLL Building Blocks</h3>
-        <ol>
-            <li>Voltage Controlled Oscillator (VCO) which is controlled by error phase</li>
-            <li>Phase Detector to determine error value</li>
-            <li>Loop Filter</li>
-            <li>Frequency Divider(Digital Block(Modulus-counter or divider))</li>
-        </ol>
-        <figure>
-            <img src="images/pll.png"/>
-            <figcaption>Block Diagram of PLL</figcaption>
-        </figure>
-        <h3>Phase Detector Implementation</h3>
-        <p>
-            
-        </p>
     </section>
 <footer>
     <p><small>Hosted on <a href="https://www.github.com/hishamelreedy/">GitHub Pages</a> by HishamElreedy</small></p>
