@@ -90,7 +90,9 @@
         </figure>
         <p>
             PLL is like above loop but instead of making Vout traces Vin it make phi out traces Phi
-            like in figure below but we merged the summer with transducer by a block named by phase detector
+            like in figure below but we merged the summer with transducer 
+            by a block named by phase shift detector(this is the right name) not the one in the figure below
+            because we are sensing the difference between phases not the actual phase <br/>
             while loop filter is the controller and VCO is the target system
         </p>
         <figure>
@@ -139,7 +141,7 @@
         </p>
         <figure>
             <img src="" alt="working on it"/>
-            <figcaption>two different phase shifts</figcaption>
+            <figcaption>two different initial shifts</figcaption>
         </figure>
         <p>
             if we make \(\lambda_1 = \lambda_2=\lambda\) but with two different angular frequencies \(\omega_1 , \omega_2\) 
@@ -165,7 +167,7 @@
         <h2>PLL Building Blocks</h2>
         <ol>
             <li>Voltage Controlled Oscillator (VCO):<span class="notbold">the process which we are trying to control(Voltage-->Frequency)</span></li>
-            <li>Phase Detector:<span class="notbold"> transforms phase error signal to AC voltage error signal(Sensor)</span></li>
+            <li>Phase Shift Detector:<span class="notbold"> transforms phase error signal to AC voltage error signal(Sensor)</span></li>
             <li>Loop Filter:<span class="notbold">changes AC Voltage signal to a DC Voltage signal for control </span></li>
             <li>Frequency Divider(Digital Block(Modulus-counter or divider)):<span class="notbold">equal to one</span></li>
         </ol>
@@ -175,17 +177,21 @@
         </figure>
         <h3>Voltage Controlled Oscillator(Actuator)</h3>
         <p>
-            We control output frequency using a gain of K and Vcontrol where it controls output frequency by the change in 
+            We control output frequency using a gain of \(K\) and \(V_{control}\) where it controls output frequency by the change in 
             input voltage 
         </p>
-        $$\omega_{out}=\omega_o + K_{VCO}.V_{CONT}$$
-        $$\omega_o is the free running frequency$$
-        $$K_{VCO} \space is \space the \space gain \space of \space VCO [(rad/sec.)/V]$$
+        $$\omega_{out}=\omega_o + K_{VCO}.V_{control}$$
+        $$\omega_o \space is \space the \space free \space running \space frequency$$
+        $$K_{VCO} \space is \space the \space gain \space of \space VCO [(rad/sec.)/V][Frequency/Voltage]$$
         <figure>
             <img src="images/vco.png"/>
-            <figcaption>Phase Shifter average versus change in shift of phase</figcaption>
+            <figcaption>Voltage Controlled Oscillator</figcaption>
         </figure>
-        <h3>Phase Detector Implementation(Sensor)</h3>
+
+        <h3>Phase shift Detector Implementation(Sensor+summer)</h3>
+        we merged sensor with the summer by sensing the difference between phase of output and input signal <mark>not</mark>
+        the actual phase of both of them and then subtract them
+        <h4>Digital Signals Phase Shift Detector</h4>
         <p>
             we implemented phase detector using xor gate but its disadvantage works only for digital signal and second
             thing is that we have not to increase phase shift than pi or decrease it than zero because that will make 
@@ -197,16 +203,9 @@
             <img src="images/phaseshiftdetector.png"/>
             <figcaption>Phase Shift Detector</figcaption>
         </figure>
-        <p>
-            we can plot average of phase shift detector along with phase shift, phase detector acts like a sensor which transforms
-            physical phenomenon(phase shift) to a Electrical characteristics(Voltage Change) in our case we can that transducer is 
-            the digital summer of xor 
-        </p>
-        $$\Delta \phi ====>PhaseDetector(Sensor)====> \Delta V$$
-        <figure>
-            <img src="images/averageofphaseshifter.png"/>
-            <figcaption>Phase Shifter average versus change in shift of phase</figcaption>
-        </figure>
+        $$\phi_1,\phi_2 ====>Phase Shift Detector(Differential Sensor)====>\Delta V$$
+        <h4>Analog Signals Phase Shift Detector</h4>
+
         <h3>Loop Filter(Controller)</h3>
         <p>
             Loop filter is a low pass filter which integrates on AC signal to get DC voltage signal for controlling VCO
@@ -215,12 +214,28 @@
         $$Current \space in \space Branch \space R =I={{V_{in}-V_{out}}\over {R}}$$ 
         $$V_{out}={Q \over c}={{\int I dt} \over c}=\int{{{V_{in}-V_{out} }\over {RC}}dt}$$
         <figure>
-            <img src="images/analoglpfrc.png"/>
-            <figcaption>Phase Shift Detector</figcaption>
+            <img src="images/phdiff.png"/>
+            <figcaption>Phase shift detection for different cases</figcaption>
         </figure>
+        <figure>
+            <img src="images/averageofphaseshifter.png"/>
+            <figcaption>Average of Vout(t)(Actuating Signal)</figcaption>
+        </figure>
+        <figure>
+            <img src="images/analoglpfrc.png" width="300px" height="200px"/>
+            <figcaption>Passive RC Filter</figcaption>
+        </figure>
+        <h4>case \(V_{controlAC}\) is Analog Sinusoidal Signal</h4>
+        <p>
+            Assume \(V_{controlAC}\) is \(V_m sin(\omega_mt)\)
+            $$\Delta V_{controlDC}=\int \Delta V_{ControlAC} dt ,then,$$
+            $$V_{out}(t)=V_ocos(\omega_ot+K_{VCO}\int V_{controlAC}dt)=V_ocos(\omega_ot+K_{VCO}{V_m \over \omega_m}sin(\omega_mt))$$
+            assume 
+        </p>
+
         <h3>Frequency Divider</h3>
         <p>
-            Building a digital counter is a simple type of flipflops
+            Building a digital counter in the form of sequence of flipflops
         </p>
         
         <h2>Behavior of PLL</h2>
